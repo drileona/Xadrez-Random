@@ -20,4 +20,5 @@
         <script type="text/javascript" src="js/jquery.js"></script>
         <script type="text/javascript" src="js/chess.js"></script>
     </body>
+    
 </html>
