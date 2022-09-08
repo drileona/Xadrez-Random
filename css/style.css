@@ -20,12 +20,13 @@ body{
     float:left;
     width:64px;
     height:64px;
+    border: 2px white;
 }
 .square-board.possible{
-    background: #069;
+    background: mediumpurple;
 }
 .dark{
-    background: #069;
+    background: mediumorchid;
 }
 .light{
     background:white;

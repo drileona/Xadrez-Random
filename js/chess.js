@@ -72,7 +72,7 @@ $(function () {
                 ultimaCasaEscolhida = casaId;
                 pecaEscolhida = $(this)
                 $('.square-board').removeClass('possible');
-                
+
             }
         }
     });
@@ -80,27 +80,98 @@ $(function () {
     $('body').on('click', '.square-board', function () {
         var temPeca = $(this).find('.piece').size();
         var idCasa = $(this).attr('id');
+        //verifyPiece(pecaEscolhida, ultimaCasaEscolhida)
         var movimentosPossiveis = verifyPiece(pecaEscolhida, ultimaCasaEscolhida);
-        $.each(movimentosPossiveis, function(i, sqr){
-            $('#'+sqr).addClass('possible');
-         }); 
-         if(idCasa != ultimaCasaEscolhida){
-             vai_para = idCasa;
-             alert(vai_para);
-             if(objSearch(movimentosPossiveis, idCasa) != null){
-                 if(mate == false){
-                     alert('Pode jogar');
-                 }else{
-                     alert('Check Mate');
-                 }
-             }else{
-                  alert('Jogada inválida');
-             }
-         }
+        $.each(movimentosPossiveis, function (i, sqr) {
+            $('#' + sqr).addClass('possible');
+        });
+
+        if (idCasa != ultimaCasaEscolhida) {
+            vai_para = idCasa;
+            //alert(vai_para);
+            if (objSearch(movimentosPossiveis, idCasa) != null) {
+                if (mate == false) {
+                    alert('Pode jogar');
+                } else {
+                    alert('Check Mate');
+                }
+            } else {
+                alert('Jogada inválida');
+            }
+        }
     });
 
     function verifyPiece(piece, square) {
+        var tipo = piece.attr('class');
+        var possibleMoves = {};
+        if (tipo == 'piece pawn-black') {
+            possibleMoves = findMovesPawn(square, 'black');
+        } else if (tipo == 'piece pawn-white') {
+            possibleMoves = findMovesPawn(square, 'white');
+        }
+        return possibleMoves;
+    }
 
+    function findMovesPawn(square, tipo) {
+        var line = Number(square[1]);
+        var colum = square[0];
+        var linha = line + 1;
+        var moves = {};
+        var x = 0;
+
+        var indiceColum = Number(objSearch(colunas, colum));
+        var proxima = Number(indiceColum) + 1;
+        var anterior = indiceColum - 1;
+        if (tipo == 'white') {
+            if (line == 2) {
+                //indo para frente
+                for (var i = 0; i < 2; i++) {
+                    var casa = $('#' + colum + (linha++));
+                    if (casa.find('.piece').size() == 0) {
+                        x++;
+                        moves[x] = casa.attr('id');
+                    } else {
+                        break;
+                    }
+                }
+            } else {
+                for (var i = 0; i < 1; i++) {
+                    var casa = $('#' + colum + (linha++));
+                    if (casa.find('.piece').size() == 0) {
+                        x++;
+                        moves[x] = casa.attr('id');
+                    } else {
+                        break;
+                    }
+                }
+            }
+
+            var linhaDiagonal = line + 1;
+            if (objSearchIndex(colunas, proxima) != null) {
+                var coluna = colunas[proxima] + linhaDiagonal;
+                if ($('#' + coluna).find('.piece').size() == 1) {
+                    var pecaEncontrada = $('#' + coluna).find('.piece').attr('class');
+                    if (pecaEncontrada.indexOf('black') >= 0) {
+                        x++;
+                        moves[x] = coluna;
+                    }
+                }
+            }
+            if (objSearchIndex(colunas, anterior) != null) {
+                var coluna = colunas[anterior] + linhaDiagonal;
+                if ($('#' + coluna).find('.piece').size() == 1) {
+                    var pecaEncontrada = $('#' + coluna).find('.piece').attr('class');
+                    if (pecaEncontrada.indexOf('black') >= 0) {
+                        x++;
+                        moves[x] = coluna;
+                    }
+                }
+            }
+
+        } else {
+            alert('Achar movimento para o peão preto');
+        }
+        return moves;
     }
     function newGame() {
         $('.square-board').each(function () {
